@@ -13,10 +13,10 @@ using Newtonsoft.Json;
 
 namespace KafkaClients
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
         }
@@ -105,7 +105,8 @@ namespace KafkaClients
                 EnableAutoCommit = false, // If the consumer crashes before committing offsets for messages that have been successfully processed, then another consumer will end up repeating the work. The more frequently you commit offsets, the less duplicates you will see in a crash.
                 //When a group is first initialized, the consumers typically begin reading from either the earliest or latest offset in each partition. The messages in each partition log are then read sequentially.               
                 AutoOffsetReset = AutoOffsetReset.Earliest, 
-            }).Build();
+            }).
+            Build();
 
             consumerClient.Subscribe(topicName);
             var result = consumerClient.Consume(timeout:TimeSpan.FromSeconds(2));
@@ -115,7 +116,7 @@ namespace KafkaClients
             else
             {
                 TestModel recievedModel = JsonConvert.DeserializeObject<TestModel>(result.Message.Value);
-                MessageBox.Show($"Recieved message. Field1: {recievedModel.Field1} Field2:{recievedModel.Field2}");
+                MessageBox.Show($"Recieved message: {Environment.NewLine}Field1: {recievedModel.Field1}{Environment.NewLine}Field2: {recievedModel.Field2}");
                 //As the message is processed. Its safe to commit the offset now. 
                 //A more reasonable approach might be to commit after every N messages where N can be tuned for better performance. 
                 consumerClient.Commit(); 
